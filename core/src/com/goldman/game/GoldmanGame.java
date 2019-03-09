@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class GoldmanGame extends ApplicationAdapter {
     SpriteBatch batch;
     Texture background;
@@ -15,6 +18,15 @@ public class GoldmanGame extends ApplicationAdapter {
     float gravity = 0.2f;
     float velocity = 0;
     int manY = 0; // wysokosc ludzika
+    Random random;
+    ArrayList<Integer> coinX = new ArrayList<Integer>();
+    ArrayList<Integer> coinY = new ArrayList<Integer>();
+    Texture coin;
+    int coinCount;
+    ArrayList<Integer> bombX = new ArrayList<Integer>();
+    ArrayList<Integer> bombY = new ArrayList<Integer>();
+    Texture bomb;
+    int bombCount;
 
 
     @Override
@@ -27,7 +39,22 @@ public class GoldmanGame extends ApplicationAdapter {
         man[2] = new Texture("frame-3.png");
         man[3] = new Texture("frame-4.png");
         manY = Gdx.graphics.getHeight() / 2;
+        coin = new Texture("coin.png");
+        bomb = new Texture("bomb.png");
+        random = new Random();
     }
+
+    public void generateCoin(){
+        float height = random.nextFloat()* Gdx.graphics.getHeight();
+        coinY.add((int) height);
+        coinX.add(Gdx.graphics.getWidth());
+    }
+    public void generateBomb(){
+        float height = random.nextFloat()* Gdx.graphics.getHeight();
+        bombY.add((int) height);
+        bombX.add(Gdx.graphics.getWidth());
+    }
+
 
     //batch wykonuje sie cały czas
     @Override
@@ -35,12 +62,33 @@ public class GoldmanGame extends ApplicationAdapter {
         batch.begin();
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        if (coinCount<100){
+            coinCount++;
+        }else{
+            coinCount=0;
+            generateCoin();
+        }
+        for (int i=0; i< coinY.size(); i++){
+            batch.draw(coin, coinX.get(i), coinY.get(i));
+            coinX.set(i, coinX.get(i)-4);
+        }
+
+        if (bombCount<300){
+            bombCount++;
+        }else{
+            bombCount=0;
+            generateBomb();
+        }
+        for (int i=0; i< bombY.size(); i++){
+            batch.draw(bomb, bombX.get(i), bombY.get(i));
+            bombX.set(i, bombX.get(i)-4);
+        }
+
+
         //przy dotknieciu
         if(Gdx.input.justTouched()){
             velocity=-10;
         }
-
-
 
         if (pause < 8) {
             pause++;
