@@ -18,6 +18,7 @@ public class GoldmanGame extends ApplicationAdapter {
     SpriteBatch batch;
     Texture background;
     Texture[] man;
+    Texture dead;
     int manState = 0;
     int pause = 0;
     float gravity = 0.2f;
@@ -62,7 +63,7 @@ public class GoldmanGame extends ApplicationAdapter {
         man[1] = new Texture("frame-2.png");
         man[2] = new Texture("frame-3.png");
         man[3] = new Texture("frame-4.png");
-
+        dead = new Texture("dizzy-1.png");
         manY = Gdx.graphics.getHeight();
         coin = new Texture("coin.png");
         bomb = new Texture("bomb.png");
@@ -162,26 +163,30 @@ public class GoldmanGame extends ApplicationAdapter {
             }
         } else if (gameState == 2) {
             //game over
-            if(Gdx.input.justTouched()){
-                gameState =1;
+            if (Gdx.input.justTouched()) {
+                gameState = 1;
             }
 
-            manY = Gdx.graphics.getHeight()/2;
-            score=0;
-            velocity=0;
+            manY = Gdx.graphics.getHeight() / 2;
+            score = 0;
+            velocity = 0;
             coinX.clear();
             coinY.clear();
             coinRectangles.clear();
-            coinCount=0;
+            coinCount = 0;
 
             bombX.clear();
             bombY.clear();
             bombRectangles.clear();
-            bombCount=0;
+            bombCount = 0;
         }
 
+        if (gameState == 2) {
+            batch.draw(dead, Gdx.graphics.getWidth() / 2 - man[manState].getWidth() / 2, manY);
+        } else {
+            batch.draw(man[manState], Gdx.graphics.getWidth() / 2 - man[manState].getWidth() / 2, manY);
+        }
 
-        batch.draw(man[manState], Gdx.graphics.getWidth() / 2 - man[manState].getWidth() / 2, manY);
         manRectangle = new Rectangle(Gdx.graphics.getWidth() / 2 - man[manState].getWidth() / 2, manY, man[manState].getWidth(), man[manState].getHeight());
         for (int i = 0; i < coinRectangles.size(); i++) {
             if (Intersector.overlaps(manRectangle, coinRectangles.get(i))) {
