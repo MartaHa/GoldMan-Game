@@ -7,27 +7,65 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GoldmanGame extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
-	
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
-	}
+    SpriteBatch batch;
+    Texture background;
+    Texture[] man;
+    int manState = 0;
+    int pause = 0;
+    float gravity = 0.2f;
+    float velocity = 0;
+    int manY = 0; // wysokosc ludzika
 
-	@Override
-	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
-	}
-	
-	@Override
-	public void dispose () {
-		batch.dispose();
-		img.dispose();
-	}
+
+    @Override
+    public void create() {
+        batch = new SpriteBatch();
+        background = new Texture("bg.png");
+        man = new Texture[4];
+        man[0] = new Texture("frame-1.png");
+        man[1] = new Texture("frame-2.png");
+        man[2] = new Texture("frame-3.png");
+        man[3] = new Texture("frame-4.png");
+        manY = Gdx.graphics.getHeight() / 2;
+    }
+
+    //batch wykonuje sie cały czas
+    @Override
+    public void render() {
+        batch.begin();
+        batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        //przy dotknieciu
+        if(Gdx.input.justTouched()){
+            velocity=-10;
+        }
+
+
+
+        if (pause < 8) {
+            pause++;
+        } else {
+            pause = 0;
+            if (manState < 3) {
+                manState++;
+            } else {
+                manState = 0;
+            }
+        }
+        velocity += gravity;
+        manY -= velocity;
+
+        if(manY <=0)
+            manY=0;
+
+        batch.draw(man[manState], Gdx.graphics.getWidth() / 2 - man[manState].getWidth() / 2, manY);
+        batch.end();
+    }
+
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+
+    }
 }
